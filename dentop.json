@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Cosmetic Dentistry",
+        "img": "https://i.ibb.co/2vb622W/img-1.jpg",
+        "description": "There are only 2 dental specialties that only focus on dental esthetics: Prosthodontics and Orthodontics"
+    },
+    {
+        "name": "Paediatic Dentistry",
+        "img": "https://i.ibb.co/KWKYsnc/img-4.jpg",
+        "description": ""
+    },
+    {
+        "name": "Dental implants",
+        "img": "https://i.ibb.co/f9KxRbf/img-3.jpg",
+        "description": "With reconstructive dentistry, we can repaire and restore the beauty of your smile."
+    },
+    {
+        "name": "Teeth Whitening",
+        "img": "https://i.ibb.co/5G8MnSj/img-2.jpg",
+        "description": "Bleaching methods use carbamide peroxide which reacts with water to form hydrogen peroxide."
+    },
+    {
+        "name": "Braces",
+        "img": "",
+        "description": "According to scholars and historians, braces date back to ancient times. Around 400-300 BC."
+    }
+]
