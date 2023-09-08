@@ -183,6 +183,21 @@ async function run() {
       res.send(reviews);
       console.log(reviewCollection);
     });
+    
+    //get my appointments
+    app.get("/myappointment", async (req, res) => {
+      console.log(req.query.email);
+      let query = {};
+      if (req.query.email) {
+        query = {
+          email: req.query.email,
+        };
+      }
+      
+      const appointments = await bookingsCollection.find(query).toArray();
+      res.send(appointments);
+      
+    });
 
     //load all services
     app.get("/allservices", async (req, res) => {
