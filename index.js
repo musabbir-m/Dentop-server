@@ -26,6 +26,9 @@ async function run() {
       .db("Dentop")
       .collection("appointmentOptions");
     const bookingsCollection = client.db("Dentop").collection("bookings");
+    const consultationCollection = client
+      .db("Dentop")
+      .collection("consultation");
 
     //load  services
     app.get("/services", async (req, res) => {
@@ -86,17 +89,17 @@ async function run() {
       console.log(appointment, "appointment body");
       //limit one user to take one appointment
       const query = {
-        appointmentDate: appointment.appointmentDate,
+        appointmentdate: appointment.appointmentdate,
         email: appointment.email,
         treatment: appointment.treatment,
       };
 
-      // const alreadyBooked= await bookingsCollection.find(query).toArray()
-      // console.log(alreadyBooked, 'alreadyBooked')
-      // if (alreadyBooked.appointmentDate===appointment.appointmentDate){
-      //   const message= `You already have a booking on ${appointment.appointmentDate}`
-      //   return res.send({acknowledged:false, message})
-      // }
+      const alreadyBooked = await bookingsCollection.find(query).toArray();
+      console.log(alreadyBooked, "alreadyBooked");
+      if (alreadyBooked.length) {
+        const message = `You already have a booking on ${appointment.appointmentdate}`;
+        return res.send({ acknowledged: false, message });
+      }
 
       const result = await bookingsCollection.insertOne(appointment);
       res.send(result);
@@ -104,24 +107,42 @@ async function run() {
 
     //post booking
 
-    app.post("/bookings", async (req, res) => {
-      const booking = req.body;
-      console.log(booking);
-      //limit one user to take one appointment
-      const query = {
-        appointmentDate: booking.appointmentDate,
-        email: booking.email,
-        treatment: booking.treatment,
-      };
-      const alreadyBooked = await bookingsCollection.find(query).toArray();
-      if (alreadyBooked.length) {
-        const message = `You already have a booking on ${booking.appointmentDate}`;
+    // app.post("/bookings", async (req, res) => {
+    //   const booking = req.body;
+    //   console.log(booking);
+    //   //limit one user to take one appointment
+    //   const query = {
+    //     appointmentdate: booking.appointmentdate,
+    //     email: booking.email,
+    //     treatment: booking.treatment,
+    //   };
+    //   console.log('Query',query, 'query')
+    //   const alreadyBooked = await bookingsCollection.find(query).toArray();
+    //   if (alreadyBooked.length) {
+    //     const message = `You already have a booking on ${booking.appointmentdate}`;
+    //     return res.send({ acknowledged: false, message });
+    //   }
+
+    //   const result = await bookingsCollection.insertOne(booking);
+    //   res.send(result);
+    //   // console.log(result);
+    // });
+
+    //post 15 min consultation appointment
+    app.post("/consultation", async (req, res) => {
+      const appointment = req.body;
+      const query= {
+        date: appointment.date,
+        email: appointment.email
+      }
+      const alreadyBooked= await consultationCollection.find(query).toArray()
+      if(alreadyBooked.length){
+        const message = `You already have an appointment on ${appointment.date}`;
         return res.send({ acknowledged: false, message });
       }
-
-      const result = await bookingsCollection.insertOne(booking);
+      const result = await consultationCollection.insertOne(appointment);
+      console.log(result, "consul");
       res.send(result);
-      // console.log(result);
     });
 
     //add service
@@ -137,18 +158,18 @@ async function run() {
     app.post("/review", async (req, res) => {
       const review = req.body;
       // check if already added review
-      const query= {
+      const query = {
         serviceName: review.serviceName,
-        email: review.email
+        email: review.email,
+      };
+    
+      const allreadyAdded = await reviewCollection.find(query).toArray();
+
+      if (allreadyAdded.length) {
+        const message = `You already added a review for ${review.serviceName}`;
+        return res.send({ acknowledged: false, message });
       }
-      console.log(query, "query check")
-      const allreadyAdded= await reviewCollection.find(query).toArray()
-      
-      if(allreadyAdded.length){
-        const message= `You already added a review for ${review.serviceName}`
-        return res.send({acknowledged:false, message})
-      }
-      
+
       const result = await reviewCollection.insertOne(review);
 
       res.send(result);
@@ -183,7 +204,7 @@ async function run() {
       res.send(reviews);
       console.log(reviewCollection);
     });
-    
+
     //get my appointments
     app.get("/myappointment", async (req, res) => {
       console.log(req.query.email);
@@ -193,10 +214,9 @@ async function run() {
           email: req.query.email,
         };
       }
-      
+
       const appointments = await bookingsCollection.find(query).toArray();
       res.send(appointments);
-      
     });
 
     //load all services
