@@ -145,6 +145,17 @@ async function run() {
       res.send(result);
     });
 
+    //get my consultation
+    
+    app.get("/myconsultation", async(req, res)=>{
+      const email= req.query.email 
+      const query= {
+        email: email 
+      }
+      const result= await consultationCollection.find(query).toArray()
+      res.send(result)
+    })
+
     //add service
 
     app.post("/service", async (req, res) => {
