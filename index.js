@@ -41,7 +41,7 @@ async function run() {
     app.get("/services/:name", async (req, res) => {
       const name = req.params.name;
       const query = { name: name };
-      const service = await serviceCollection.findOne(query).toArray();
+      const service = await serviceCollection.findOne(query)
 
       res.send(service);
     });
